@@ -1,7 +1,15 @@
 import { ReactNode, useState } from 'react';
 import { ToggleSwitch } from './ToggleSwitch';
 import { BaseWidgetSettings } from '@irdashies/types';
-import { useDashboard } from '@irdashies/context';
+import {
+  useActiveSimulator,
+  useDashboard,
+  useSimWidgetSupport,
+} from '@irdashies/context';
+import {
+  widgetDisabledMessage,
+  widgetIncompatibleLabel,
+} from '@irdashies/types';
 
 interface BaseSettingsSectionProps<T> {
   title: string;
@@ -14,6 +22,8 @@ interface BaseSettingsSectionProps<T> {
     | ReactNode;
   onConfigChange?: (config: Partial<T>) => void;
   disableInternalScroll?: boolean;
+  /** For widgets that never appear on the overlay, so have no position. */
+  hidePositionReset?: boolean;
 }
 
 export const BaseSettingsSection = <T,>({
@@ -25,8 +35,22 @@ export const BaseSettingsSection = <T,>({
   children,
   onConfigChange,
   disableInternalScroll = false,
+  hidePositionReset = false,
 }: BaseSettingsSectionProps<T>) => {
   const { currentDashboard, onDashboardUpdated } = useDashboard();
+  const simulator = useActiveSimulator();
+  const supportConfig = useSimWidgetSupport();
+  // The running sim cannot show this widget. The toggle is greyed and the saved
+  // setting is left untouched, so it returns as the user left it under a sim
+  // that supports it.
+  const simDisabledReason = widgetDisabledMessage(
+    supportConfig,
+    widgetId,
+    simulator
+  );
+  const simIncompatibleLabel = simDisabledReason
+    ? widgetIncompatibleLabel(simulator)
+    : null;
   const [localSettings, setLocalSettings] = useState<BaseWidgetSettings<T>>(
     settings ?? { enabled: false, config: {} as T }
   );
@@ -160,12 +184,24 @@ export const BaseSettingsSection = <T,>({
         <div>
           <div className="flex justify-between items-center mb-1">
             <h2 className="text-xl">{title}</h2>
-            <ToggleSwitch
-              enabled={localSettings.enabled}
-              onToggle={(enabled) =>
-                handleSettingsChange({ ...localSettings, enabled })
-              }
-            />
+            <div className="flex flex-col items-end gap-0.5">
+              <ToggleSwitch
+                enabled={localSettings.enabled}
+                disabled={!!simDisabledReason}
+                disabledReason={simDisabledReason ?? undefined}
+                onToggle={(enabled) =>
+                  handleSettingsChange({ ...localSettings, enabled })
+                }
+              />
+              {simIncompatibleLabel && (
+                <span
+                  className="text-xs text-slate-500"
+                  title={simDisabledReason ?? undefined}
+                >
+                  {simIncompatibleLabel}
+                </span>
+              )}
+            </div>
           </div>
           <p className="text-slate-400 text-sm">{description}</p>
         </div>
@@ -182,15 +218,17 @@ export const BaseSettingsSection = <T,>({
           </div>
         )}
 
-        <div className="flex justify-center p-4 pt-2 mt-2">
-          <button
-            type="button"
-            onClick={handleResetPosition}
-            className="px-3 py-1 text-sm bg-slate-600 hover:bg-slate-500 text-slate-300 rounded-md transition-colors"
-          >
-            Reset Position
-          </button>
-        </div>
+        {!hidePositionReset && (
+          <div className="flex justify-center p-4 pt-2 mt-2">
+            <button
+              type="button"
+              onClick={handleResetPosition}
+              className="px-3 py-1 text-sm bg-slate-600 hover:bg-slate-500 text-slate-300 rounded-md transition-colors"
+            >
+              Reset Position
+            </button>
+          </div>
+        )}
 
         {showResetConfirm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">

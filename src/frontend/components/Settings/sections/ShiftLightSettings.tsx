@@ -13,7 +13,6 @@ import { SettingsSection } from '../components/SettingSection';
 import { SettingToggleRow } from '../components/SettingToggleRow';
 import { SettingDivider } from '../components/SettingDivider';
 import { TabButton } from '../components/TabButton';
-import { SettingButtonGroupRow } from '../components/SettingButtonGroupRow';
 import { SettingSliderRow } from '../components/SettingSliderRow';
 import logger from '@irdashies/utils/logger';
 
@@ -418,8 +417,8 @@ export const ShiftLightSettings = () => {
 
   return (
     <BaseSettingsSection
-      title="ShiftLight"
-      description="Configure the shiftlight.   Hint: enable 'Show RPM Text' to see where the box is."
+      title="Shift Light"
+      description="Configure the Shift Light. Hint: enable 'Show RPM Text' to see where the box is."
       settings={settings}
       onSettingsChange={setSettings}
       widgetId="shiftlight"
@@ -478,8 +477,6 @@ export const ShiftLightSettings = () => {
                     })
                   }
                 />
-
-                
               </SettingsSection>
             )}
 
@@ -505,7 +502,7 @@ export const ShiftLightSettings = () => {
 
                 <SettingToggleRow
                   title="Show only when on track"
-                  description="If enabled, shiftlight will only be shown when driving"
+                  description="If enabled, Shift Light will only be shown when driving"
                   enabled={settings.config.showOnlyWhenOnTrack ?? false}
                   onToggle={(newValue) =>
                     handleConfigChange({ showOnlyWhenOnTrack: newValue })

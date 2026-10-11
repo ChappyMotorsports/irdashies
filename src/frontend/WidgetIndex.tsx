@@ -8,6 +8,7 @@ import { Wind } from './components/Wind';
 import { FasterCarsFromBehind } from './components/FasterCarsFromBehind/FasterCarsFromBehind';
 import { FuelCalculator } from './components/FuelCalculator';
 import { BlindSpotMonitor } from './components/BlindSpotMonitor/BlindSpotMonitor';
+import { Radar } from './components/Radar/Radar';
 import { GarageCover } from './components/GarageCover/GarageCover';
 import { RejoinIndicator } from './components/RejoinIndicator/RejoinIndicator';
 import { TelemetryInspector } from './components/TelemetryInspector/TelemetryInspector';
@@ -41,6 +42,7 @@ export {
   FasterCarsFromBehind,
   FuelCalculator,
   BlindSpotMonitor,
+  Radar,
   GarageCover,
   RejoinIndicator,
   TelemetryInspector,
@@ -72,6 +74,7 @@ export const WIDGET_MAP: Record<keyof WidgetConfigMap, ElementType> = {
   fastercarsfrombehind: FasterCarsFromBehind,
   fuel: FuelCalculator,
   blindspotmonitor: BlindSpotMonitor,
+  radar: Radar,
   garagecover: GarageCover,
   rejoin: RejoinIndicator,
   telemetryinspector: TelemetryInspector,

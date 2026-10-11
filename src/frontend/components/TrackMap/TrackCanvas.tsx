@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Driver } from '@irdashies/types';
-import tracks from './tracks/tracks.json';
+import tracks from '@irdashies/domain/track/tracks/tracks.json';
 import { getColor, getTailwindStyle } from '@irdashies/utils/colors';
-import { shouldShowTrack } from './tracks/brokenTracks';
+import { shouldShowTrack } from '@irdashies/domain/track/tracks/brokenTracks';
 import { TrackDebug } from './TrackDebug';
 import { useStartFinishLine } from './hooks/useStartFinishLine';
 import {
@@ -60,6 +60,8 @@ export interface TrackProps {
   currentSectorIdx?: number;
   playerIconDataUrl?: string | null;
   driverLivePositions?: Record<number, number>;
+  /** Caps redraws, e.g. for a map docked in the Gantry. */
+  maxFps?: number;
 }
 
 export interface TrackDriver {
@@ -127,6 +129,7 @@ export const TrackCanvas = ({
   currentSectorIdx,
   playerIconDataUrl = null,
   driverLivePositions = {},
+  maxFps,
 }: TrackProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cacheCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -501,7 +504,7 @@ export const TrackCanvas = ({
         pitEl.style.display = 'none';
       }
     }
-  });
+  }, maxFps);
 
   const renderIconOverlay = () =>
     playerIconDataUrl ? (

@@ -153,9 +153,17 @@ export const DashboardProvider: React.FC<{
       setEditMode(editMode)
     );
     bridge.getAppVersion?.().then((version) => setVersion(version));
-    const unsubDemoMode = bridge.onDemoModeChanged?.((demoMode) =>
-      setIsDemoMode(demoMode)
-    );
+    // Toggling demo mode can rebuild the overlay windows after the change
+    // was announced, so a new window asks for the current state; an event
+    // that lands first is newer than the answer and wins.
+    let demoModeHeard = false;
+    const unsubDemoMode = bridge.onDemoModeChanged?.((demoMode) => {
+      demoModeHeard = true;
+      setIsDemoMode(demoMode);
+    });
+    bridge.getIsDemoMode?.().then((demoMode) => {
+      if (!demoModeHeard) setIsDemoMode(demoMode);
+    });
     const unsubContainerBounds = bridge.onContainerBoundsInfo?.((info) => {
       setContainerBoundsInfo(info);
     });
@@ -289,6 +297,20 @@ export const useDashboard = (): DashboardContextProps => {
     throw new Error('useDashboard must be used within a DashboardProvider');
   }
   return context;
+};
+
+/**
+ * The dashboard bridge, without requiring a provider.
+ *
+ * The browser view hands its WebSocket bridge to DashboardProvider and never
+ * assigns window.dashboardBridge, so a hook reading only the global sees
+ * nothing there and reports every answer as unavailable. Hooks that also run
+ * outside a provider fall back to the global, which is what the Electron
+ * renderers have.
+ */
+export const useDashboardBridge = (): DashboardBridge | undefined => {
+  const context = useContext(DashboardContext);
+  return context?.bridge ?? window.dashboardBridge;
 };
 
 export const useGeneralSettings = (): GeneralSettingsType | undefined => {

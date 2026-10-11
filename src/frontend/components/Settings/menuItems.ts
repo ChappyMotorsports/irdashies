@@ -149,6 +149,12 @@ export const widgetItems: MenuItem[] = [
     widgetType: 'pitlanehelper',
   },
   {
+    to: '/settings/radar',
+    path: '/radar',
+    label: 'Radar',
+    widgetType: 'radar',
+  },
+  {
     to: '/settings/rejoin',
     path: '/rejoin',
     label: 'Rejoin Indicator',
@@ -169,7 +175,7 @@ export const widgetItems: MenuItem[] = [
   {
     to: '/settings/shiftlight',
     path: '/shiftlight',
-    label: 'ShiftLight',
+    label: 'Shift Light',
     widgetType: 'shiftlight',
   },
   {

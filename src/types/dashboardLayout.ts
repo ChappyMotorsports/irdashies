@@ -1,3 +1,5 @@
+import type { SimulatorPreference } from './simulators';
+
 /**
  * Represents the layout of a widget on a dashboard.
  */
@@ -25,6 +27,12 @@ export interface DashboardWidget {
   layout: WidgetLayout;
   /** Configuration for the widget. */
   config?: Record<string, unknown>;
+  /**
+   * Where the widget renders. 'gantry' means it is only shown docked in the
+   * Gantry window, never on the overlay or the browser source. Undefined
+   * means 'overlay'.
+   */
+  placement?: 'overlay' | 'gantry';
 }
 
 export interface TagGroup {
@@ -127,6 +135,13 @@ export interface GeneralSettingsType {
   enableAutoStart?: boolean;
   startMinimized?: boolean;
   closeToTray?: boolean;
+  /**
+   * Which simulator to read telemetry from. 'auto' picks whichever available
+   * simulator is publishing, and defaults to 'auto' when unset. A `--sim=`
+   * argument or IRDASHIES_SIM overrides it. A simulator this build cannot talk
+   * to falls back to 'auto' rather than leaving the app with no source.
+   */
+  simulator?: SimulatorPreference;
   compactMode?: 'off' | 'compact' | 'ultra';
   overlayAlwaysOnTop?: boolean;
   enableNetworkAccess?: boolean;
